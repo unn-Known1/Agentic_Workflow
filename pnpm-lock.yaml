@@ -138,7 +138,7 @@ importers:
         specifier: ^6.26.2
         version: 6.30.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       reactflow:
-        specifier: ^11.11.4
+        specifier: ^11.10.4
         version: 11.11.4(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       recharts:
         specifier: ^2.12.7
