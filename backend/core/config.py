@@ -4,8 +4,8 @@ import os
 
 class Settings(BaseSettings):
     # API Settings
-    api_host: str = "0.0.0.0"
-    api_port: int = 8000
+    api_host: str = os.getenv("API_HOST", "127.0.0.1")  # Default to localhost for security
+    api_port: int = int(os.getenv("API_PORT", "8000"))
     
     # NVIDIA API Settings
     nvidia_api_key: Optional[str] = os.getenv("NVIDIA_API_KEY")
@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     embedding_model: str = "all-MiniLM-L6-v2"
     
     # Redis Settings
-    redis_url: str = "redis://localhost:6379"
+    redis_url: str = os.getenv("REDIS_URL", "redis://127.0.0.1:6379")
     
     # Security
     secret_key: str = os.getenv("SECRET_KEY", "your-secret-key-here")
