@@ -1,6 +1,13 @@
 import { toast } from "sonner";
 
-const API_BASE_URL = "http://localhost:8000/api";
+// Get API base URL from environment or default to localhost for development
+const getApiBaseUrl = () => {
+  const envUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  if (envUrl) return envUrl;
+  return "http://localhost:8000/api";
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export interface Agent {
   id: number;
