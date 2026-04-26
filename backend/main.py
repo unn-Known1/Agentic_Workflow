@@ -19,9 +19,9 @@ async def lifespan(app: FastAPI):
     await vector_store.initialize()
     await nvidia_service.initialize()
     print("✅ Startup complete")
-    
+
     yield
-    
+
     # Shutdown
     print("🛑 Shutting down...")
     await vector_store.close()
@@ -34,10 +34,10 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS middleware
-# Use environment variable for CORS origins in production
-import os
-_cors_origins = os.getenv("CORS_ORIGINS", "*").split(",") if os.getenv("CORS_ORIGINS") else ["*"]
+# CORS middleware - Use restrictive defaults from settings
+from core.config import settings
+_cors_origins = settings.get_cors_origins()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_cors_origins,
@@ -46,10 +46,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount static files
-if not os.path.exists("static"):
-    os.makedirs("static")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Mount static files - with error handling for directory creation
+try:
+    if not os.path.exists("static"):
+        os.makedirs("static", mode=0o755)
+    app.mount("/static", StaticFiles(directory="static"), name="static")
+except PermissionError as e:
+    print(f"Warning: Could not create static directory: {e}")
 
 # Include routers
 app.include_router(agents.router, prefix="/api/agents", tags=["agents"])
@@ -80,8 +83,8 @@ async def health():
 if __name__ == "__main__":
     uvicorn.run(
         "main:app",
-        host="0.0.0.0",
-        port=8000,
+        host=settings.api_host,
+        port=settings.api_port,
         reload=True,
         log_level="info"
     )
