@@ -1,6 +1,27 @@
 import { toast } from "sonner";
 
-const API_BASE_URL = "http://localhost:8000/api";
+// Get API base URL from environment or default to localhost for development
+// In production, this should always be set via NEXT_PUBLIC_API_BASE_URL
+const getApiBaseUrl = (): string => {
+  // Check for environment variable (works in both server and client)
+  const envUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  if (envUrl && envUrl.trim() !== "") {
+    // Ensure URL ends with /api
+    return envUrl.endsWith("/api") ? envUrl : `${envUrl}/api`;
+  }
+
+  // Development fallback with localhost
+  // Check if we're running on localhost
+  if (typeof window !== "undefined" && window.location.hostname === "localhost") {
+    return "http://localhost:8000/api";
+  }
+
+  // Production fallback - this should NOT happen if environment is configured correctly
+  console.warn("WARNING: Using localhost fallback for API_BASE_URL. Set NEXT_PUBLIC_API_BASE_URL in production!");
+  return "http://localhost:8000/api";
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export interface Agent {
   id: number;
