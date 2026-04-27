@@ -1,10 +1,11 @@
 import { toast } from "sonner";
 
 // Get API base URL from environment or default to localhost for development
-// In production, this should always be set via NEXT_PUBLIC_API_BASE_URL
+// In production, this should always be set via VITE_API_BASE_URL
 const getApiBaseUrl = (): string => {
-  // Check for environment variable (works in both server and client)
-  const envUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  // Check for environment variable (Vite uses import.meta.env)
+  // For Vite, env vars must be prefixed with VITE_
+  const envUrl = (import.meta as any).env?.VITE_API_BASE_URL || (import.meta as any).env?.NEXT_PUBLIC_API_BASE_URL;
   if (envUrl && envUrl.trim() !== "") {
     // Ensure URL ends with /api
     return envUrl.endsWith("/api") ? envUrl : `${envUrl}/api`;
@@ -17,7 +18,7 @@ const getApiBaseUrl = (): string => {
   }
 
   // Production fallback - this should NOT happen if environment is configured correctly
-  console.warn("WARNING: Using localhost fallback for API_BASE_URL. Set NEXT_PUBLIC_API_BASE_URL in production!");
+  console.warn("WARNING: Using localhost fallback for API_BASE_URL. Set VITE_API_BASE_URL in production!");
   return "http://localhost:8000/api";
 };
 

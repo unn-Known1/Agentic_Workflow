@@ -7,6 +7,19 @@ export default defineConfig(() => ({
   server: {
     host: "::",
     port: 8080,
+    proxy: {
+      "/api": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+        // Only proxy in development
+        bypass: (req, res) => {
+          if (process.env.NODE_ENV === "production") {
+            // In production, don't proxy - use VITE_API_BASE_URL
+            return req.url;
+          }
+        },
+      },
+    },
   },
   plugins: [dyadComponentTagger(), react()],
   resolve: {
